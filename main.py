@@ -31,9 +31,9 @@ async def post_raw_data(id: int, req: Request):
     data = await req.body()
 
     # データを WebSocket で接続しているクライアントに送信
-    await manager.send(id, data)
+    device_count = await manager.send(id, data)
 
-    return data
+    return {"device": device_count}
 
 
 @app.websocket("/ws/{id}")
@@ -54,7 +54,3 @@ async def websocket_endpoint(id: int, websocket: WebSocket):
     except WebSocketDisconnect:
         # WebSocket 接続が切断された場合は解除
         await manager.disconnect(id, websocket)
-
-@app.api_route("/*")
-async def read_root():
-    return HTMLResponse("File not found", status_code=404)

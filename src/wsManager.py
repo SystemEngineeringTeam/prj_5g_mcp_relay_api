@@ -28,11 +28,13 @@ class WSManager:
         self.active_connections[id].remove(websocket)
 
     async def send(self, id: int, message: bytes):
-        if id not in self.active_connections:
-            return
+        if id not in self.active_connections.keys():
+            return 0
 
         for connection in self.active_connections[id]:
             try:
                 await connection.send_bytes(message)
             except:
                 self.active_connections[id].remove(connection)
+
+        return len(self.active_connections[id])
